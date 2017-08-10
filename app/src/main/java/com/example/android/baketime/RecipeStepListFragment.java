@@ -58,7 +58,7 @@ public class RecipeStepListFragment extends Fragment {
                 mAdapter.add(ingredients.toString());
                 JSONArray stepsArray = new JSONArray(getActivity().getIntent().getStringExtra(STEPS));
                 for (int i = 1; i < stepsArray.length(); i++) {
-                    mAdapter.add(stepsArray.getJSONObject(i).getString("description"));
+                    mAdapter.add(stepsArray.getJSONObject(i).toString());
                 }
             }catch (JSONException e) {
                 Log.e(LOG_TAG, e.getMessage(), e);

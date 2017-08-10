@@ -20,9 +20,17 @@ import android.view.View;
  */
 public class RecipeStepDetailActivity extends AppCompatActivity {
 
+    private final String LOG_TAG = RecipeStepDetailActivity.class.getSimpleName();
+
+    @Override
+    public void onStart(){
+        super.onStart();
+        Log.e(LOG_TAG, getIntent().getStringExtra("step"));
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.e("onCreate", "RecipeStepDetailActivity");
+        Log.e(LOG_TAG, "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipestep_detail);
         Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
@@ -70,6 +78,7 @@ public class RecipeStepDetailActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
+
             // This ID represents the Home or Up button. In the case of this
             // activity, the Up button is shown. Use NavUtils to allow users
             // to navigate up one level in the application structure. For
@@ -77,7 +86,10 @@ public class RecipeStepDetailActivity extends AppCompatActivity {
             //
             // http://developer.android.com/design/patterns/navigation.html#up-vs-back
             //
-            NavUtils.navigateUpTo(this, new Intent(this, RecipeStepListActivity.class));
+            //NavUtils.navigateUpTo(this, new Intent(this, RecipeStepListActivity.class));
+            //pressing back button instead
+            onBackPressed();
+            Log.e(LOG_TAG, "back button pressed");
             return true;
         }
         return super.onOptionsItemSelected(item);

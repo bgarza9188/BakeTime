@@ -64,7 +64,6 @@ public class RecipeRecyclerViewAdapter
                     Log.e(LOG_TAG,"inside mTwoPane is false");
                     Context context = v.getContext();
                     Intent intent = new Intent(context, RecipeStepListActivity.class);
-                    //intent.putExtra(RecipeStepDetailFragment.ARG_ITEM_ID, holder.mItem.id);
                     intent.putExtra("recipeName", mValues.get(position).name);
                     intent.putExtra("steps", mValues.get(position).steps);
                     intent.putExtra("ingredients", mValues.get(position).ingredients);
