@@ -15,14 +15,15 @@ public class RecipeListActivity extends AppCompatActivity implements OnTaskCompl
 
     private final String LOG_TAG = RecipeListActivity.class.getSimpleName();
 
-    private SimpleItemRecyclerViewAdapter mAdapter;
+    private RecipeRecyclerViewAdapter mAdapter;
 
 
-    private boolean mTwoPane;
+    private boolean mTwoPane = false;
 
     @Override
     public void onStart(){
         super.onStart();
+        Log.e(LOG_TAG,"onStart");
         FetchRecipeTask task = new FetchRecipeTask();
         task.listener=this;
         task.execute("");
@@ -40,22 +41,24 @@ public class RecipeListActivity extends AppCompatActivity implements OnTaskCompl
 
         View recyclerView = findViewById(R.id.recipe_list);
         assert recyclerView != null;
-        setupRecyclerView((RecyclerView) recyclerView);
-        if (findViewById(R.id.recipe_detail_container) != null) {
-            // The detail container view will be present only in the
-            // large-screen layouts (res/values-w900dp).
-            // If this view is present, then the
-            // activity should be in two-pane mode.
-            Log.e("mTwoPane", "RecipeListActivity");
-            mTwoPane = true;
-        }
 
+//        if (findViewById(R.id.recipe_detail_container) != null) {
+//            // The detail container view will be present only in the
+//            // large-screen layouts (res/values-w900dp).
+//            // If this view is present, then the
+//            // activity should be in two-pane mode.
+//            Log.e(LOG_TAG, "setting mTwoPane To true");
+//            mTwoPane = true;
+//        }
+        setupRecyclerView((RecyclerView) recyclerView, mTwoPane);
     }
 
-    private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        mAdapter = new SimpleItemRecyclerViewAdapter(getApplicationContext());
+    private void setupRecyclerView(@NonNull RecyclerView recyclerView, boolean mTwoPane) {
+        Log.e("setupRecyclerView", "null checks");
+        mAdapter = new RecipeRecyclerViewAdapter(getSupportFragmentManager(), mTwoPane);
         if(mAdapter != null && recyclerView != null) {
             recyclerView.setAdapter(mAdapter);
+            Log.e("after","adapter is set");
         }
     }
 
@@ -81,7 +84,7 @@ public class RecipeListActivity extends AppCompatActivity implements OnTaskCompl
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                SimpleItemRecyclerViewAdapter.Recipe test = new SimpleItemRecyclerViewAdapter.Recipe(id, name, ingredients, steps);
+                RecipeRecyclerViewAdapter.Recipe test = new RecipeRecyclerViewAdapter.Recipe(id, name, ingredients, steps);
                 mAdapter.add(test);
                 mAdapter.notifyDataSetChanged();
                 //Log.e(LOG_TAG, "results:" + i + " " + result[i]);

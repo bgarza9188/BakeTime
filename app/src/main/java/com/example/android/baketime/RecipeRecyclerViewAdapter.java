@@ -3,8 +3,9 @@ package com.example.android.baketime;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,18 +18,21 @@ import java.util.List;
  * Created by jebus on 6/1/2017.
  */
 
-public class SimpleItemRecyclerViewAdapter
-        extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
+public class RecipeRecyclerViewAdapter
+        extends RecyclerView.Adapter<RecipeRecyclerViewAdapter.ViewHolder> {
 
     private final List<Recipe> mValues;
 
-    public boolean mTwoPane = false;
+    private boolean mTwoPane = false;
 
-    private Context mContext;
+    private FragmentManager mFragmentManager;
 
-    public SimpleItemRecyclerViewAdapter(Context activityContext) {
-        mContext = activityContext;
+    private final String LOG_TAG = RecipeRecyclerViewAdapter.class.getSimpleName();
+
+    public RecipeRecyclerViewAdapter(FragmentManager fragmentManager, boolean mTwoPane) {
+        mFragmentManager = fragmentManager;
         mValues = new ArrayList<>();
+        this.mTwoPane = mTwoPane;
     }
 
     @Override
@@ -39,7 +43,7 @@ public class SimpleItemRecyclerViewAdapter
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
         holder.mItem = mValues.get(position);
         holder.mIdView.setText(mValues.get(position).id);
         holder.mContentView.setText(mValues.get(position).name);
@@ -48,18 +52,22 @@ public class SimpleItemRecyclerViewAdapter
             @Override
             public void onClick(View v) {
                 if (mTwoPane) {
+                    Log.e(LOG_TAG,"inside mTwoPane is true");
                     Bundle arguments = new Bundle();
                     arguments.putString(RecipeStepDetailFragment.ARG_ITEM_ID, holder.mItem.id);
                     RecipeStepDetailFragment fragment = new RecipeStepDetailFragment();
                     fragment.setArguments(arguments);
-                    ((AppCompatActivity) mContext).getSupportFragmentManager().beginTransaction()
+                    mFragmentManager.beginTransaction()
                             .replace(R.id.recipe_detail_container, fragment)
                             .commit();
                 } else {
+                    Log.e(LOG_TAG,"inside mTwoPane is false");
                     Context context = v.getContext();
-                    Intent intent = new Intent(context, RecipeStepDetailActivity.class);
-                    intent.putExtra(RecipeStepDetailFragment.ARG_ITEM_ID, holder.mItem.id);
-
+                    Intent intent = new Intent(context, RecipeStepListActivity.class);
+                    //intent.putExtra(RecipeStepDetailFragment.ARG_ITEM_ID, holder.mItem.id);
+                    intent.putExtra("recipeName", mValues.get(position).name);
+                    intent.putExtra("steps", mValues.get(position).steps);
+                    intent.putExtra("ingredients", mValues.get(position).ingredients);
                     context.startActivity(intent);
                 }
             }
@@ -86,7 +94,7 @@ public class SimpleItemRecyclerViewAdapter
         }
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mIdView;
         public final TextView mContentView;

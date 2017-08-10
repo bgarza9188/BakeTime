@@ -1,11 +1,9 @@
 package com.example.android.baketime;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -21,25 +19,34 @@ import android.view.View;
 public class RecipeStepListActivity extends AppCompatActivity{
 
     private final String LOG_TAG = RecipeStepListActivity.class.getSimpleName();
-
-
-    /**
-     * Whether or not the activity is in two-pane mode, i.e. running on a tablet
-     * device.
-     */
     private boolean mTwoPane;
 
 
 
+
+    @Override
+    public void onStart(){
+        super.onStart();
+    }
+    /**
+     * Whether or not the activity is in two-pane mode, i.e. running on a tablet
+     * device.
+     */
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.e("onCreate","RecipeStepListActivity");
+        Log.e(LOG_TAG,"onCreate");
         setContentView(R.layout.activity_recipestep_list);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        if(getIntent().getStringExtra("recipeName") != null){
+            Log.e(LOG_TAG,"setting name: " + getIntent().getStringExtra("recipeName"));
+            toolbar.setTitle(getIntent().getStringExtra("recipeName"));
+        }else{
+            toolbar.setTitle(getTitle());
+        }
         setSupportActionBar(toolbar);
-        toolbar.setTitle(getTitle());
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -50,9 +57,8 @@ public class RecipeStepListActivity extends AppCompatActivity{
             }
         });
 
-        View recyclerView = findViewById(R.id.recipestep_list);
-        assert recyclerView != null;
-        setupRecyclerView((RecyclerView) recyclerView);
+
+
 
         if (findViewById(R.id.recipe_detail_container) != null) {
             // The detail container view will be present only in the
@@ -61,10 +67,11 @@ public class RecipeStepListActivity extends AppCompatActivity{
             // activity should be in two-pane mode.
             mTwoPane = true;
         }
-    }
 
-    private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(getApplicationContext()));
+        RecipeStepListFragment fragment = new RecipeStepListFragment();
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.step_list_container, fragment)
+                .commit();
     }
-
 }
+
