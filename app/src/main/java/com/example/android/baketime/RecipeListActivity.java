@@ -64,11 +64,11 @@ public class RecipeListActivity extends AppCompatActivity implements OnTaskCompl
 
     @Override
     public void onTaskCompleted(String[] result) {
-        if(result == null)
+        if(result == null) {
             Log.e(LOG_TAG, "no restults :/");
-        else
+        }else {
             mAdapter.clear();
-            for(int i= 0; i< result.length; i++) {
+            for (int i = 0; i < result.length; i++) {
 
                 String id = null;
                 String name = null;
@@ -89,6 +89,7 @@ public class RecipeListActivity extends AppCompatActivity implements OnTaskCompl
                 mAdapter.notifyDataSetChanged();
                 //Log.e(LOG_TAG, "results:" + i + " " + result[i]);
             }
+        }
     }
 
 }

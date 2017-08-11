@@ -47,7 +47,7 @@ public class RecipeStepListFragment extends Fragment {
         Log.e(LOG_TAG,"onStart");
         Log.e(LOG_TAG,"steps: " + getActivity().getIntent().getStringExtra(STEPS));
         Log.e(LOG_TAG,"ingredients: " + getActivity().getIntent().getStringExtra(INGREDIENTS));
-        if(getActivity().getIntent().getStringExtra(INGREDIENTS) != null && getActivity().getIntent().getStringExtra(STEPS) != null) {
+        if(getActivity().getIntent().getStringExtra(INGREDIENTS) != null && getActivity().getIntent().getStringExtra(STEPS) != null && mAdapter.getItemCount() == 0) {
             StringBuilder ingredients = new StringBuilder();
             try {
                 JSONArray ingredientsArray = new JSONArray(getActivity().getIntent().getStringExtra(INGREDIENTS));
@@ -60,6 +60,7 @@ public class RecipeStepListFragment extends Fragment {
                 for (int i = 1; i < stepsArray.length(); i++) {
                     mAdapter.add(stepsArray.getJSONObject(i).toString());
                 }
+                mAdapter.notifyDataSetChanged();
             }catch (JSONException e) {
                 Log.e(LOG_TAG, e.getMessage(), e);
                 e.printStackTrace();
@@ -92,7 +93,7 @@ public class RecipeStepListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.recipe_list, container, false);
+        View rootView = inflater.inflate(R.layout.step_list, container, false);
 
 //        // Show the dummy content as text in a TextView.
 //        if (mItem != null) {

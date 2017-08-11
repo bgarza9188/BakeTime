@@ -38,15 +38,14 @@ public class RecipeRecyclerViewAdapter
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.recipestep_list_content, parent, false);
+                .inflate(R.layout.recipe_list_content, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).id);
-        holder.mContentView.setText(mValues.get(position).name);
+        holder.mRecipeView.setText(mValues.get(position).name);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,9 +56,9 @@ public class RecipeRecyclerViewAdapter
                     arguments.putString(RecipeStepDetailFragment.ARG_ITEM_ID, holder.mItem.id);
                     RecipeStepDetailFragment fragment = new RecipeStepDetailFragment();
                     fragment.setArguments(arguments);
-                    mFragmentManager.beginTransaction()
-                            .replace(R.id.recipe_detail_container, fragment)
-                            .commit();
+//                    mFragmentManager.beginTransaction()
+//                            .replace(R.id.recipe_detail_container, fragment)
+//                            .commit();
                 } else {
                     Log.e(LOG_TAG,"inside mTwoPane is false");
                     Context context = v.getContext();
@@ -97,6 +96,7 @@ public class RecipeRecyclerViewAdapter
         public final View mView;
         public final TextView mIdView;
         public final TextView mContentView;
+        public final TextView mRecipeView;
         public Recipe mItem;
 
         public ViewHolder(View view) {
@@ -104,6 +104,7 @@ public class RecipeRecyclerViewAdapter
             mView = view;
             mIdView = (TextView) view.findViewById(R.id.id);
             mContentView = (TextView) view.findViewById(R.id.content);
+            mRecipeView = (TextView) view.findViewById(R.id.recipe);
         }
 
         @Override

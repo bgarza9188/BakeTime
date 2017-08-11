@@ -2,7 +2,6 @@ package com.example.android.baketime;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -48,6 +47,7 @@ public class StepRecyclerViewAdapter extends RecyclerView.Adapter<RecipeRecycler
             holder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Log.e(LOG_TAG,"inside ON Click!");
                     Context context = v.getContext();
                     Intent intent = new Intent(context, RecipeStepDetailActivity.class);
                     intent.putExtra("step", mValues.get(position));
