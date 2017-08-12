@@ -33,6 +33,7 @@ public class RecipeStepListFragment extends Fragment {
      * The dummy content this fragment is presenting.
      */
     private RecipeRecyclerViewAdapter.Recipe recipe;
+    private boolean mTwoPane = false;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -47,6 +48,7 @@ public class RecipeStepListFragment extends Fragment {
         Log.e(LOG_TAG,"onStart");
         Log.e(LOG_TAG,"steps: " + getActivity().getIntent().getStringExtra(STEPS));
         Log.e(LOG_TAG,"ingredients: " + getActivity().getIntent().getStringExtra(INGREDIENTS));
+
         if(getActivity().getIntent().getStringExtra(INGREDIENTS) != null && getActivity().getIntent().getStringExtra(STEPS) != null && mAdapter.getItemCount() == 0) {
             StringBuilder ingredients = new StringBuilder();
             try {
@@ -56,11 +58,13 @@ public class RecipeStepListFragment extends Fragment {
                     ingredients.append(", ");
                 }
                 mAdapter.add(ingredients.toString());
+                mAdapter.notifyDataSetChanged();
                 JSONArray stepsArray = new JSONArray(getActivity().getIntent().getStringExtra(STEPS));
                 for (int i = 1; i < stepsArray.length(); i++) {
                     mAdapter.add(stepsArray.getJSONObject(i).toString());
+                    mAdapter.notifyDataSetChanged();
                 }
-                mAdapter.notifyDataSetChanged();
+
             }catch (JSONException e) {
                 Log.e(LOG_TAG, e.getMessage(), e);
                 e.printStackTrace();
@@ -99,16 +103,18 @@ public class RecipeStepListFragment extends Fragment {
 //        if (mItem != null) {
 //            ((TextView) rootView.findViewById(R.id.recipestep_detail)).setText(mItem.details);
 //        }
+        mTwoPane = getActivity().getIntent().getBooleanExtra("mTwoPane",false);
+        Log.e(LOG_TAG, "mTwoPane is..." + mTwoPane);
 
         View recyclerView = rootView;
         assert recyclerView != null;
-        setupRecyclerView((RecyclerView) recyclerView, false);
+        setupRecyclerView((RecyclerView) recyclerView, mTwoPane);
 
         return rootView;
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView, boolean mTwoPane) {
-        mAdapter = new StepRecyclerViewAdapter();
+        mAdapter = new StepRecyclerViewAdapter(getFragmentManager(), mTwoPane);
         recyclerView.setAdapter(mAdapter);
     }
 

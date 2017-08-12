@@ -2,6 +2,7 @@ package com.example.android.baketime;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,10 +23,17 @@ public class StepRecyclerViewAdapter extends RecyclerView.Adapter<RecipeRecycler
 
     private final List<String> mValues;
     private final String LOG_TAG = StepRecyclerViewAdapter.class.getSimpleName();
+    private boolean mTwoPane = false;
+
+    private FragmentManager mFragmentManager;
 
 
-    public StepRecyclerViewAdapter() {
+    public StepRecyclerViewAdapter(FragmentManager fragmentManager, boolean mTwoPane) {
+        mFragmentManager = fragmentManager;
+        this.mTwoPane = mTwoPane;
         mValues = new ArrayList<>();
+        Log.e(LOG_TAG, "mTwoPane is..." + mTwoPane);
+        Log.e(LOG_TAG, "this.mTwoPane is..." + this.mTwoPane);
     }
 
     @Override
@@ -47,11 +55,22 @@ public class StepRecyclerViewAdapter extends RecyclerView.Adapter<RecipeRecycler
             holder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.e(LOG_TAG,"inside ON Click!");
-                    Context context = v.getContext();
-                    Intent intent = new Intent(context, RecipeStepDetailActivity.class);
-                    intent.putExtra("step", mValues.get(position));
-                    context.startActivity(intent);
+                    if (mTwoPane) {
+                        Log.e(LOG_TAG,"inside mTwoPane is true");
+//                        Bundle arguments = new Bundle();
+//                        arguments.putString(RecipeStepDetailFragment.ARG_ITEM_ID, holder.mItem.id);
+                        RecipeStepDetailFragment fragment = new RecipeStepDetailFragment();
+//                        fragment.setArguments(arguments);
+                        mFragmentManager.beginTransaction()
+                            .replace(R.id.step_detail_container, fragment)
+                            .commit();
+                    }else {
+                        Log.e(LOG_TAG, "inside ON Click!");
+                        Context context = v.getContext();
+                        Intent intent = new Intent(context, RecipeStepDetailActivity.class);
+                        intent.putExtra("step", mValues.get(position));
+                        context.startActivity(intent);
+                    }
                 }
             });
         }

@@ -43,14 +43,15 @@ public class RecipeStepDetailFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Log.e(LOG_TAG, "onCreate");
 
-        if (getArguments().containsKey(ARG_ITEM_ID)) {
-            Log.e(LOG_TAG, "testing for Args");
+        //TODO might need to do something here for two panes VS single pane
+//        if (getArguments().containsKey(ARG_ITEM_ID)) {
+//            Log.e(LOG_TAG, "testing for Args");
             Activity activity = this.getActivity();
             CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
             if (appBarLayout != null) {
                 appBarLayout.setTitle("Recipe Step Title?");
             }
-        }
+//        }
     }
 
     @Override

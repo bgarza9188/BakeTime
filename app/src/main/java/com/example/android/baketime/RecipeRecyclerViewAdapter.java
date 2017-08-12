@@ -2,8 +2,6 @@ package com.example.android.baketime;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,16 +21,12 @@ public class RecipeRecyclerViewAdapter
 
     private final List<Recipe> mValues;
 
-    private boolean mTwoPane = false;
 
-    private FragmentManager mFragmentManager;
 
     private final String LOG_TAG = RecipeRecyclerViewAdapter.class.getSimpleName();
 
-    public RecipeRecyclerViewAdapter(FragmentManager fragmentManager, boolean mTwoPane) {
-        mFragmentManager = fragmentManager;
+    public RecipeRecyclerViewAdapter() {
         mValues = new ArrayList<>();
-        this.mTwoPane = mTwoPane;
     }
 
     @Override
@@ -50,24 +44,13 @@ public class RecipeRecyclerViewAdapter
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mTwoPane) {
-                    Log.e(LOG_TAG,"inside mTwoPane is true");
-                    Bundle arguments = new Bundle();
-                    arguments.putString(RecipeStepDetailFragment.ARG_ITEM_ID, holder.mItem.id);
-                    RecipeStepDetailFragment fragment = new RecipeStepDetailFragment();
-                    fragment.setArguments(arguments);
-//                    mFragmentManager.beginTransaction()
-//                            .replace(R.id.recipe_detail_container, fragment)
-//                            .commit();
-                } else {
-                    Log.e(LOG_TAG,"inside mTwoPane is false");
-                    Context context = v.getContext();
-                    Intent intent = new Intent(context, RecipeStepListActivity.class);
-                    intent.putExtra("recipeName", mValues.get(position).name);
-                    intent.putExtra("steps", mValues.get(position).steps);
-                    intent.putExtra("ingredients", mValues.get(position).ingredients);
-                    context.startActivity(intent);
-                }
+            Log.e(LOG_TAG,"inside mTwoPane is false");
+            Context context = v.getContext();
+            Intent intent = new Intent(context, RecipeStepListActivity.class);
+            intent.putExtra("recipeName", mValues.get(position).name);
+            intent.putExtra("steps", mValues.get(position).steps);
+            intent.putExtra("ingredients", mValues.get(position).ingredients);
+            context.startActivity(intent);
             }
         });
     }

@@ -55,7 +55,7 @@ public class RecipeListActivity extends AppCompatActivity implements OnTaskCompl
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView, boolean mTwoPane) {
         Log.e("setupRecyclerView", "null checks");
-        mAdapter = new RecipeRecyclerViewAdapter(getSupportFragmentManager(), mTwoPane);
+        mAdapter = new RecipeRecyclerViewAdapter();
         if(mAdapter != null && recyclerView != null) {
             recyclerView.setAdapter(mAdapter);
             Log.e("after","adapter is set");
