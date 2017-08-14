@@ -6,6 +6,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+
+import com.google.android.exoplayer2.ExoPlaybackException;
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.Timeline;
+import com.google.android.exoplayer2.source.TrackGroupArray;
+import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 
 /**
  * An activity representing a single Recipe Step detail screen. This
@@ -13,14 +20,13 @@ import android.view.MenuItem;
  * item details are presented side-by-side with a list of items
  * in a {@link RecipeStepListActivity}.
  */
-public class RecipeStepDetailActivity extends AppCompatActivity {
+public class RecipeStepDetailActivity extends AppCompatActivity implements View.OnClickListener, ExoPlayer.EventListener{
 
     private final String LOG_TAG = RecipeStepDetailActivity.class.getSimpleName();
 
     @Override
     public void onStart(){
         super.onStart();
-        Log.e(LOG_TAG, getIntent().getStringExtra("step"));
     }
 
     @Override
@@ -50,8 +56,8 @@ public class RecipeStepDetailActivity extends AppCompatActivity {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
             Bundle arguments = new Bundle();
-            arguments.putString(RecipeStepDetailFragment.ARG_ITEM_ID,
-                    getIntent().getStringExtra(RecipeStepDetailFragment.ARG_ITEM_ID));
+            arguments.putString(RecipeStepDetailFragment.ARG_STEP,
+                    getIntent().getStringExtra(RecipeStepDetailFragment.ARG_STEP));
             RecipeStepDetailFragment fragment = new RecipeStepDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
@@ -79,5 +85,40 @@ public class RecipeStepDetailActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onClick(View v) {
+
+    }
+
+    @Override
+    public void onTimelineChanged(Timeline timeline, Object manifest) {
+
+    }
+
+    @Override
+    public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
+
+    }
+
+    @Override
+    public void onLoadingChanged(boolean isLoading) {
+
+    }
+
+    @Override
+    public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+
+    }
+
+    @Override
+    public void onPlayerError(ExoPlaybackException error) {
+
+    }
+
+    @Override
+    public void onPositionDiscontinuity() {
+
     }
 }

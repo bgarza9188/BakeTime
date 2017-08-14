@@ -2,6 +2,7 @@ package com.example.android.baketime;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -50,17 +51,17 @@ public class StepRecyclerViewAdapter extends RecyclerView.Adapter<RecipeRecycler
             holder.mContentView.setText(mValues.get(position));
         }
         else if(position>0){
-            holder.mIdView.setText("Step");
-            holder.mContentView.setText(getStepDescriptionFromJason(mValues.get(position)));
+            holder.mIdView.setText("Step " + position);
+            holder.mContentView.setText(getStepShortDescriptionFromJSON(mValues.get(position)));
             holder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (mTwoPane) {
                         Log.e(LOG_TAG,"inside mTwoPane is true");
-//                        Bundle arguments = new Bundle();
-//                        arguments.putString(RecipeStepDetailFragment.ARG_ITEM_ID, holder.mItem.id);
+                        Bundle arguments = new Bundle();
+                        arguments.putString(RecipeStepDetailFragment.ARG_STEP, mValues.get(position));
                         RecipeStepDetailFragment fragment = new RecipeStepDetailFragment();
-//                        fragment.setArguments(arguments);
+                        fragment.setArguments(arguments);
                         mFragmentManager.beginTransaction()
                             .replace(R.id.step_detail_container, fragment)
                             .commit();
@@ -68,7 +69,7 @@ public class StepRecyclerViewAdapter extends RecyclerView.Adapter<RecipeRecycler
                         Log.e(LOG_TAG, "inside ON Click!");
                         Context context = v.getContext();
                         Intent intent = new Intent(context, RecipeStepDetailActivity.class);
-                        intent.putExtra("step", mValues.get(position));
+                        intent.putExtra(RecipeStepDetailFragment.ARG_STEP, mValues.get(position));
                         context.startActivity(intent);
                     }
                 }
@@ -96,10 +97,30 @@ public class StepRecyclerViewAdapter extends RecyclerView.Adapter<RecipeRecycler
         }
     }
 
-    public String getStepDescriptionFromJason(String step) {
+    public static String getStepDescriptionFromJSON(String step) {
         try {
             JSONObject stepString = new JSONObject(step);
             return stepString.getString("description");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public String getStepShortDescriptionFromJSON(String step) {
+        try {
+            JSONObject stepString = new JSONObject(step);
+            return stepString.getString("shortDescription");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static String getStepVideoURL(String step) {
+        try {
+            JSONObject stepString = new JSONObject(step);
+            return stepString.getString("videoURL");
         } catch (JSONException e) {
             e.printStackTrace();
         }
