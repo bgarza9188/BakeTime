@@ -13,8 +13,7 @@
         <activity
             android:name=".RecipeStepListActivity"
             android:label="@string/title_recipestep_list"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".RecipeStepDetailActivity"
             android:label="@string/title_recipestep_detail"
@@ -34,6 +33,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <receiver android:name="StackWidgetProvider">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider"
+                android:resource="@xml/stackwidgetinfo" />
+        </receiver>
+        <service android:name="StackWidgetService"
+            android:permission="android.permission.BIND_REMOTEVIEWS"
+            android:exported="false" />
     </application>
 
 </manifest>

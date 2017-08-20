@@ -26,8 +26,6 @@ public class FetchRecipeTask extends AsyncTask<String, Void, String[]> {
 
     @Override
     protected String[] doInBackground(String... params) {
-
-
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
         StringBuffer buffer;
@@ -93,13 +91,13 @@ public class FetchRecipeTask extends AsyncTask<String, Void, String[]> {
         return null;
     }
 
-    private String[] getRecipeDataFromJson(String movieJsonStr)
+    private String[] getRecipeDataFromJson(String recipeJsonStr)
             throws JSONException {
         Log.e(LOG_TAG, "before json stuff");
         String[] resultStrings;
         // These are the names of the JSON objects that need to be extracted.
 
-        JSONArray recipeArray = new JSONArray(movieJsonStr);
+        JSONArray recipeArray = new JSONArray(recipeJsonStr);
 
         resultStrings = new String[recipeArray.length()];
 

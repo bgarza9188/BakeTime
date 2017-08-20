@@ -2,4 +2,5 @@
     <string name="title_recipestep_list">Recipe - Steps</string>
     <string name="title_recipestep_detail">Recipe Step Details</string>
     <string name="app_name">Bake Time Recipes</string>
+    <string name="empty_view_text">This is the empty view</string>
 </resources>
