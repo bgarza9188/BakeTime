@@ -99,7 +99,7 @@ public class RecipeStepListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.step_list, container, false);
 
-//        // Show the dummy content as text in a TextView.
+//        // Show the dummy content as name in a TextView.
 //        if (mItem != null) {
 //            ((TextView) rootView.findViewById(R.id.recipestep_detail)).setText(mItem.details);
 //        }

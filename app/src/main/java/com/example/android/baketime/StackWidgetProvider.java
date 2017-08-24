@@ -24,11 +24,13 @@ import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 import android.widget.RemoteViews;
-import android.widget.Toast;
+
+import static android.app.PendingIntent.getBroadcast;
 
 public class StackWidgetProvider extends AppWidgetProvider {
-    public static final String TOAST_ACTION = "com.example.android.stackwidget.TOAST_ACTION";
-    public static final String EXTRA_ITEM = "com.example.android.stackwidget.EXTRA_ITEM";
+    public static final String TOAST_ACTION = "com.example.android.baketime.TOAST_ACTION";
+    public static final String EXTRA_ITEM = "com.example.android.baketime.EXTRA_ITEM";
+    public static final String RESET_ACTION = "com.example.android.baketime.REST_ACTION";
     private String LOG_TAG = StackWidgetProvider.class.getName();
 
     @Override
@@ -49,18 +51,30 @@ public class StackWidgetProvider extends AppWidgetProvider {
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.e(LOG_TAG, "Ben in onRecieve");
-        AppWidgetManager mgr = AppWidgetManager.getInstance(context);
         if (intent.getAction().equals(TOAST_ACTION)) {
-            int appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
-                    AppWidgetManager.INVALID_APPWIDGET_ID);
-            int viewIndex = intent.getIntExtra(EXTRA_ITEM, 0);
-            Toast.makeText(context, "Touched view " + viewIndex, Toast.LENGTH_LONG).show();
+            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+            String viewIngredients = intent.getStringExtra(EXTRA_ITEM);
+            //Toast.makeText(context, "Ingredients:" + viewIngredients, Toast.LENGTH_LONG).show();
+            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_item);
+            views.setTextViewText(R.id.widget_item, viewIngredients);
+
+            Intent resetIntent = new Intent(context, StackWidgetProvider.class);
+            resetIntent.setAction(StackWidgetProvider.RESET_ACTION);
+            PendingIntent pt = getBroadcast(context, 0, resetIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            views.setOnClickPendingIntent(R.id.widget_item, pt);
+            appWidgetManager.updateAppWidget(intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, 0), views);
+
+
+        }
+        if(intent.getAction().equals(RESET_ACTION)){
+            Log.e(LOG_TAG, "Reset hit!");
         }
         super.onReceive(context, intent);
     }
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
+        Log.e(LOG_TAG, "Ben in onUpdate");
         // update each of the widgets with the remote adapter
         for (int i = 0; i < appWidgetIds.length; ++i) {
 
@@ -86,7 +100,7 @@ public class StackWidgetProvider extends AppWidgetProvider {
             toastIntent.setAction(StackWidgetProvider.TOAST_ACTION);
             toastIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetIds[i]);
             intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
-            PendingIntent toastPendingIntent = PendingIntent.getBroadcast(context, 0, toastIntent,
+            PendingIntent toastPendingIntent = getBroadcast(context, 0, toastIntent,
                     PendingIntent.FLAG_UPDATE_CURRENT);
             rv.setPendingIntentTemplate(R.id.stack_view, toastPendingIntent);
 

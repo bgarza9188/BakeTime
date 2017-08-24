@@ -17,9 +17,11 @@
 package com.example.android.baketime;
 
 public class WidgetItem {
-    public String text;
+    public String name;
+    public String ingredients;
 
-    public WidgetItem(String text) {
-        this.text = text;
+    public WidgetItem(String name, String ingredients) {
+        this.name = name;
+        this.ingredients = ingredients;
     }
 }

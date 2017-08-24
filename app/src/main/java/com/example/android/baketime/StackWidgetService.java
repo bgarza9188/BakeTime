@@ -92,14 +92,15 @@ class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory{
         // position will always range from 0 to getCount() - 1.
 
         // We construct a remote views item based on our widget item xml file, and set the
-        // text based on the position.
+        // name based on the position.
         RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.widget_item);
-        rv.setTextViewText(R.id.widget_item, mWidgetItems.get(position).text);
+        rv.setTextViewText(R.id.widget_item, mWidgetItems.get(position).name);
 
         // Next, we set a fill-intent which will be used to fill-in the pending intent template
         // which is set on the collection view in StackWidgetProvider.
         Bundle extras = new Bundle();
-        extras.putInt(StackWidgetProvider.EXTRA_ITEM, position);
+        //extras.putInt(StackWidgetProvider.EXTRA_ITEM, position);
+        extras.putString(StackWidgetProvider.EXTRA_ITEM, mWidgetItems.get(position).ingredients);
         Intent fillInIntent = new Intent();
         fillInIntent.putExtras(extras);
         rv.setOnClickFillInIntent(R.id.widget_item, fillInIntent);
@@ -209,13 +210,19 @@ class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory{
             throws JSONException {
         Log.e(LOG_TAG, "Ben before json, in 'getRecipeDataFromJson' in StackWidgetService");
         // These are the names of the JSON objects that need to be extracted.
-
         JSONArray recipeArray = new JSONArray(recipeJsonStr);
-
         for (int i = 0; i < recipeArray.length(); i++) {
             JSONObject recipe = recipeArray.getJSONObject(i);
             String name = recipe.get("name").toString();
-            mWidgetItems.add(new WidgetItem(name));
+            StringBuilder ingredients = new StringBuilder();
+
+            JSONArray ingredientsArray = new JSONArray(recipe.get("ingredients").toString());
+            for (int j = 0; j < ingredientsArray.length(); j++) {
+                JSONObject ingredient = ingredientsArray.getJSONObject(j);
+                ingredients.append(ingredient.getString("ingredient"));
+                ingredients.append(", ");
+            }
+            mWidgetItems.add(new WidgetItem(name, ingredients.toString()));
         }
     }
 }
