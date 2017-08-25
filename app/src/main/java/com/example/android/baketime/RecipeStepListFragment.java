@@ -55,7 +55,9 @@ public class RecipeStepListFragment extends Fragment {
                 JSONArray ingredientsArray = new JSONArray(getActivity().getIntent().getStringExtra(INGREDIENTS));
                 for (int i = 0; i < ingredientsArray.length(); i++) {
                     ingredients.append(ingredientsArray.getJSONObject(i).getString(INGREDIENT));
-                    ingredients.append(", ");
+                    if(i < ingredientsArray.length()-1){
+                        ingredients.append(", ");
+                    }
                 }
                 mAdapter.add(ingredients.toString());
                 mAdapter.notifyDataSetChanged();

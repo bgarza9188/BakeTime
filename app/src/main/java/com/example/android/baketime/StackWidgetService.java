@@ -220,7 +220,9 @@ class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory{
             for (int j = 0; j < ingredientsArray.length(); j++) {
                 JSONObject ingredient = ingredientsArray.getJSONObject(j);
                 ingredients.append(ingredient.getString("ingredient"));
-                ingredients.append(", ");
+                if(j < ingredientsArray.length()-1){
+                    ingredients.append(", ");
+                }
             }
             mWidgetItems.add(new WidgetItem(name, ingredients.toString()));
         }

@@ -19,6 +19,7 @@ package com.example.android.baketime;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -28,7 +29,7 @@ import android.widget.RemoteViews;
 import static android.app.PendingIntent.getBroadcast;
 
 public class StackWidgetProvider extends AppWidgetProvider {
-    public static final String TOAST_ACTION = "com.example.android.baketime.TOAST_ACTION";
+    public static final String UPDATE_ACTION = "com.example.android.baketime.UPDATE_ACTION";
     public static final String EXTRA_ITEM = "com.example.android.baketime.EXTRA_ITEM";
     public static final String RESET_ACTION = "com.example.android.baketime.REST_ACTION";
     private String LOG_TAG = StackWidgetProvider.class.getName();
@@ -51,23 +52,27 @@ public class StackWidgetProvider extends AppWidgetProvider {
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.e(LOG_TAG, "Ben in onRecieve");
-        if (intent.getAction().equals(TOAST_ACTION)) {
-            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+        int appWidgetID = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, 0);
+        if (intent.getAction().equals(UPDATE_ACTION)) {
             String viewIngredients = intent.getStringExtra(EXTRA_ITEM);
-            //Toast.makeText(context, "Ingredients:" + viewIngredients, Toast.LENGTH_LONG).show();
-            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_item);
-            views.setTextViewText(R.id.widget_item, viewIngredients);
+            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_list);
+            views.setTextViewText(R.id.widget_list, viewIngredients);
 
             Intent resetIntent = new Intent(context, StackWidgetProvider.class);
             resetIntent.setAction(StackWidgetProvider.RESET_ACTION);
+            resetIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetID);
             PendingIntent pt = getBroadcast(context, 0, resetIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-            views.setOnClickPendingIntent(R.id.widget_item, pt);
-            appWidgetManager.updateAppWidget(intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, 0), views);
+            views.setOnClickPendingIntent(R.id.widget_list, pt);
+            appWidgetManager.updateAppWidget(appWidgetID, views);
 
 
         }
         if(intent.getAction().equals(RESET_ACTION)){
-            Log.e(LOG_TAG, "Reset hit!");
+            Log.e(LOG_TAG, "Reset Action");
+            int[] appWidgetIds =
+                    appWidgetManager.getAppWidgetIds(new ComponentName(context.getPackageName(), StackWidgetProvider.class.getName()));
+            onUpdate(context, appWidgetManager, appWidgetIds);
         }
         super.onReceive(context, intent);
     }
@@ -96,11 +101,11 @@ public class StackWidgetProvider extends AppWidgetProvider {
             // cannot setup their own pending intents, instead, the collection as a whole can
             // setup a pending intent template, and the individual items can set a fillInIntent
             // to create unique before on an item to item basis.
-            Intent toastIntent = new Intent(context, StackWidgetProvider.class);
-            toastIntent.setAction(StackWidgetProvider.TOAST_ACTION);
-            toastIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetIds[i]);
+            Intent updateIntent = new Intent(context, StackWidgetProvider.class);
+            updateIntent.setAction(StackWidgetProvider.UPDATE_ACTION);
+            updateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetIds[i]);
             intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
-            PendingIntent toastPendingIntent = getBroadcast(context, 0, toastIntent,
+            PendingIntent toastPendingIntent = getBroadcast(context, 0, updateIntent,
                     PendingIntent.FLAG_UPDATE_CURRENT);
             rv.setPendingIntentTemplate(R.id.stack_view, toastPendingIntent);
 
