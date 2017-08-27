@@ -5,9 +5,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
+import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
@@ -26,6 +29,8 @@ import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
+
+import static android.content.Context.WINDOW_SERVICE;
 
 /**
  * A fragment representing a single Recipe Step detail screen.
@@ -58,7 +63,6 @@ public class RecipeStepDetailFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Log.e(LOG_TAG, "onCreate");
 
-        //TODO might need to do something here for two panes VS single pane
         if (getArguments().containsKey(ARG_STEP) && getArguments().getString(ARG_STEP) != null) {
             Log.e(LOG_TAG, "testing for Args");
             Log.e(LOG_TAG, "ARG_STEP:" + getArguments().getString(ARG_STEP));
@@ -73,9 +77,24 @@ public class RecipeStepDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.recipestep_detail, container, false);
+        View rootView = null;
+        SimpleExoPlayerView mPlayerView;
+        Display display = ((WindowManager) getActivity().getSystemService(WINDOW_SERVICE))
+                .getDefaultDisplay();
+
+        int orientation = display.getRotation();
+        Log.e(LOG_TAG, "orientation:" + orientation);
+
         // Initialize the player view.
-        SimpleExoPlayerView mPlayerView = (SimpleExoPlayerView) rootView.findViewById(R.id.playerView);
+        //TODO this might force fullscreen when in Tablet mode aswell, probably need to handle that separately.
+        if(orientation == Surface.ROTATION_90 || orientation == Surface.ROTATION_270) {
+            Log.e(LOG_TAG, "Ben getting view from Activity because Landscape");
+            mPlayerView = (SimpleExoPlayerView) getActivity().findViewById(R.id.player_view);
+        }else{
+            rootView = inflater.inflate(R.layout.recipestep_detail, container, false);
+            mPlayerView = (SimpleExoPlayerView) rootView.findViewById(R.id.player_view);
+        }
+
         if(stepVideoURL != null && !stepVideoURL.isEmpty()) {
             Log.e(LOG_TAG, "stepVideoURL:" + stepVideoURL);
 
@@ -94,6 +113,8 @@ public class RecipeStepDetailFragment extends Fragment {
 
             // Bind the player to the view.
             mPlayerView.setPlayer(mPlayer);
+            //mPlayerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FILL);
+            //Log.e(LOG_TAG, "Ben after setting resize mode!");
 
             // Set the ExoPlayer.EventListener to this activity.
             mPlayer.addListener((ExoPlayer.EventListener) getActivity());
@@ -124,9 +145,12 @@ public class RecipeStepDetailFragment extends Fragment {
                     (getResources(), R.drawable.question_mark));
         }
 
-        ((TextView) rootView.findViewById(R.id.recipestep_detail)).setText(stepDescription);
+        if(rootView != null) {
+            ((TextView) rootView.findViewById(R.id.recipestep_detail)).setText(stepDescription);
+            return rootView;
+        }
 
-        return rootView;
+        return mPlayerView;
     }
 
     /**

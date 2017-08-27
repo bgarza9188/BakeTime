@@ -7,7 +7,7 @@
     tools:context="com.example.android.baketime.RecipeStepDetailFragment">
 
     <com.google.android.exoplayer2.ui.SimpleExoPlayerView
-        android:id="@+id/playerView"
+        android:id="@+id/player_view"
         android:layout_width="match_parent"
         android:layout_height="270dp"
         android:layout_margin="8dp"

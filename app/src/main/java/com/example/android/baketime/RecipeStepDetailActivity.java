@@ -53,6 +53,7 @@ public class RecipeStepDetailActivity extends AppCompatActivity implements View.
         // http://developer.android.com/guide/components/fragments.html
         //
         if (savedInstanceState == null) {
+            Log.e(LOG_TAG, "Ben in savedInstStaet = null");
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
             Bundle arguments = new Bundle();
