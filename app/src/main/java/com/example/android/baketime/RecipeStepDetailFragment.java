@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Surface;
@@ -50,7 +49,7 @@ public class RecipeStepDetailFragment extends Fragment {
     private SimpleExoPlayer mPlayer;
 
     /**
-     * The fragment argument representing the item ID that this fragment
+     * The fragment argument representing the step ID that this fragment
      * represents.
      */
     public static final String ARG_STEP = "stepObject";
@@ -73,11 +72,10 @@ public class RecipeStepDetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.e(LOG_TAG, "onCreate");
 
+        //If the fragment arguments are present this means that the fragment was started by either
+        //the tablet mode activity or itself.
         if (getArguments().containsKey(ARG_STEP) && getArguments().getString(ARG_STEP) != null) {
-            Log.e(LOG_TAG, "testing for Args");
-            Log.e(LOG_TAG, "ARG_STEP:" + getArguments().getString(ARG_STEP));
             stepDescription = StepRecyclerViewAdapter.getStepDescriptionFromJSON(getArguments().getString(ARG_STEP));
             stepVideoURL = StepRecyclerViewAdapter.getStepVideoURL(getArguments().getString(ARG_STEP));
         } else {
@@ -106,15 +104,15 @@ public class RecipeStepDetailFragment extends Fragment {
                 .getDefaultDisplay();
         int orientation = display.getRotation();
         boolean isTwoPane = false;
-        Log.e(LOG_TAG, "orientation:" + orientation);
 
-        if(getArguments().containsKey(ARG_TWO_PANE_FLAG) && getArguments().getBoolean(ARG_TWO_PANE_FLAG)){
+        //Determine if we're in tablet mode.
+        if(getArguments().containsKey(ARG_TWO_PANE_FLAG)
+                && getArguments().getBoolean(ARG_TWO_PANE_FLAG)){
             isTwoPane = true;
         }
 
-        // Initialize the player view.
+        // Initialize the player view. This is done dynamically to handle orientation changes.
         if(orientation == Surface.ROTATION_90 || orientation == Surface.ROTATION_270 && isTwoPane == false) {
-            Log.e(LOG_TAG, "Ben getting view from Activity because Landscape");
             mPlayerView = (SimpleExoPlayerView) getActivity().findViewById(R.id.player_view);
         }else{
             rootView = inflater.inflate(R.layout.recipestep_detail, container, false);
@@ -122,8 +120,6 @@ public class RecipeStepDetailFragment extends Fragment {
         }
 
         if(stepVideoURL != null && !stepVideoURL.isEmpty()) {
-            Log.e(LOG_TAG, "stepVideoURL:" + stepVideoURL);
-
             // 1. Create a default TrackSelector
             BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
             TrackSelection.Factory videoTrackSelectionFactory =
@@ -132,15 +128,11 @@ public class RecipeStepDetailFragment extends Fragment {
                     new DefaultTrackSelector(videoTrackSelectionFactory);
             LoadControl loadControl = new DefaultLoadControl();
 
-
             // 2. Create the player
             mPlayer = ExoPlayerFactory.newSimpleInstance(getActivity(), trackSelector, loadControl);
 
-
             // Bind the player to the view.
             mPlayerView.setPlayer(mPlayer);
-            //mPlayerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FILL);
-            //Log.e(LOG_TAG, "Ben after setting resize mode!");
 
             // Set the ExoPlayer.EventListener to this activity.
             mPlayer.addListener((ExoPlayer.EventListener) getActivity());
@@ -154,6 +146,7 @@ public class RecipeStepDetailFragment extends Fragment {
             mPlayer.prepare(mediaSource);
             mPlayer.setPlayWhenReady(true);
         } else {
+            //This player will show a blank video since one wasn't provided with the step.
             // 1. Create a default TrackSelector
             BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
             TrackSelection.Factory videoTrackSelectionFactory =
@@ -185,8 +178,9 @@ public class RecipeStepDetailFragment extends Fragment {
             }
             //If at end of step list in phone mode.
             if(stepsArray != null && stepPosition+1 == stepsArray.length){
-                Toasty.success(getActivity(), "Success! You made it to the last step!", Toast.LENGTH_LONG, true).show();
+                Toasty.success(getActivity(), getText(R.string.success_msg), Toast.LENGTH_LONG, true).show();
             }
+            //If next button is clicked
             nextButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -201,10 +195,9 @@ public class RecipeStepDetailFragment extends Fragment {
                             .replace(R.id.recipestep_detail_container, fragment)
                             .commit();
                 }
-                Log.e(LOG_TAG,"Ben in onclick of next button");
                 }
             });
-
+            //If previous button is clicked
             previousButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -219,12 +212,8 @@ public class RecipeStepDetailFragment extends Fragment {
                                 .replace(R.id.recipestep_detail_container, fragment)
                                 .commit();
                     }
-                    Log.e(LOG_TAG,"Ben in onclick of prev button");
                 }
             });
-
-
-
             return rootView;
         }
 

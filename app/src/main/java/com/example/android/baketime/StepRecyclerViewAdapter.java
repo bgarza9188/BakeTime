@@ -27,14 +27,14 @@ public class StepRecyclerViewAdapter extends RecyclerView.Adapter<RecipeRecycler
     private boolean mTwoPane = false;
 
     private FragmentManager mFragmentManager;
+    private Context mContext;
 
 
-    public StepRecyclerViewAdapter(FragmentManager fragmentManager, boolean mTwoPane) {
+    public StepRecyclerViewAdapter(Context context, FragmentManager fragmentManager, boolean mTwoPane) {
+        mContext = context;
         mFragmentManager = fragmentManager;
         this.mTwoPane = mTwoPane;
         mValues = new ArrayList<>();
-        Log.e(LOG_TAG, "mTwoPane is..." + mTwoPane);
-        Log.e(LOG_TAG, "this.mTwoPane is..." + this.mTwoPane);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class StepRecyclerViewAdapter extends RecyclerView.Adapter<RecipeRecycler
             holder.mContentView.setText(mValues.get(position));
         }
         else if(position>0){
-            holder.mIdView.setText("Step " + position);
+            holder.mIdView.setText(mContext.getString(R.string.step_with_space) + position);
             holder.mContentView.setText(getStepShortDescriptionFromJSON(mValues.get(position)));
             holder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override

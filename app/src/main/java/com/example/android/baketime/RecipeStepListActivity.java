@@ -3,7 +3,6 @@ package com.example.android.baketime;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -32,25 +31,21 @@ public class RecipeStepListActivity extends AppCompatActivity implements View.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.e(LOG_TAG,"onCreate");
         setContentView(R.layout.activity_recipestep_list);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         if(getIntent().getStringExtra("recipeName") != null){
-            Log.e(LOG_TAG,"setting name: " + getIntent().getStringExtra("recipeName"));
             toolbar.setTitle(getIntent().getStringExtra("recipeName"));
         }else{
             toolbar.setTitle(getTitle());
         }
         setSupportActionBar(toolbar);
 
-
         if (findViewById(R.id.step_detail_container) != null) {
             // The detail container view will be present only in the
             // large-screen layouts (res/layout-w600dp).
             // If this view is present, then the
             // activity should be in two-pane mode.
-            Log.e(LOG_TAG,"found detail container");
             getIntent().putExtra("mTwoPane", true);
         }
 

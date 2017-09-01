@@ -44,9 +44,6 @@ public class RecipeStepListFragment extends Fragment {
     @Override
     public void onStart(){
         super.onStart();
-        Log.e(LOG_TAG,"onStart");
-        Log.e(LOG_TAG,"steps: " + getActivity().getIntent().getStringExtra(STEPS));
-        Log.e(LOG_TAG,"ingredients: " + getActivity().getIntent().getStringExtra(INGREDIENTS));
 
         if(getActivity().getIntent().getStringExtra(INGREDIENTS) != null && getActivity().getIntent().getStringExtra(STEPS) != null && mAdapter.getItemCount() == 0) {
             StringBuilder ingredients = new StringBuilder();
@@ -56,7 +53,7 @@ public class RecipeStepListFragment extends Fragment {
                 for (int i = 0; i < ingredientsArray.length(); i++) {
                     ingredients.append(ingredientsArray.getJSONObject(i).getString(INGREDIENT));
                     if(i < ingredientsArray.length()-1){
-                        ingredients.append(", ");
+                        ingredients.append(getString(R.string.comma_with_space));
                     }
                 }
                 mAdapter.add(ingredients.toString());
@@ -77,7 +74,6 @@ public class RecipeStepListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.e(LOG_TAG, "onCreate");
     }
 
     @Override
@@ -86,7 +82,6 @@ public class RecipeStepListFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.step_list, container, false);
 
         mTwoPane = getActivity().getIntent().getBooleanExtra("mTwoPane",false);
-        Log.e(LOG_TAG, "mTwoPane is..." + mTwoPane);
 
         View recyclerView = rootView;
         assert recyclerView != null;
@@ -96,7 +91,7 @@ public class RecipeStepListFragment extends Fragment {
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView, boolean mTwoPane) {
-        mAdapter = new StepRecyclerViewAdapter(getFragmentManager(), mTwoPane);
+        mAdapter = new StepRecyclerViewAdapter(getContext(), getFragmentManager(), mTwoPane);
         recyclerView.setAdapter(mAdapter);
     }
 

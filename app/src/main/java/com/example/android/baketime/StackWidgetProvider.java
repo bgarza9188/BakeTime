@@ -23,7 +23,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.util.Log;
 import android.widget.RemoteViews;
 
 import static android.app.PendingIntent.getBroadcast;
@@ -51,7 +50,6 @@ public class StackWidgetProvider extends AppWidgetProvider {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.e(LOG_TAG, "Ben in onRecieve");
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
         int appWidgetID = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, 0);
         if (intent.getAction().equals(UPDATE_ACTION)) {
@@ -65,11 +63,8 @@ public class StackWidgetProvider extends AppWidgetProvider {
             PendingIntent pt = getBroadcast(context, 0, resetIntent, PendingIntent.FLAG_UPDATE_CURRENT);
             views.setOnClickPendingIntent(R.id.widget_list, pt);
             appWidgetManager.updateAppWidget(appWidgetID, views);
-
-
         }
         if(intent.getAction().equals(RESET_ACTION)){
-            Log.e(LOG_TAG, "Reset Action");
             int[] appWidgetIds =
                     appWidgetManager.getAppWidgetIds(new ComponentName(context.getPackageName(), StackWidgetProvider.class.getName()));
             onUpdate(context, appWidgetManager, appWidgetIds);
@@ -79,7 +74,6 @@ public class StackWidgetProvider extends AppWidgetProvider {
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        Log.e(LOG_TAG, "Ben in onUpdate");
         // update each of the widgets with the remote adapter
         for (int i = 0; i < appWidgetIds.length; ++i) {
 

@@ -3,7 +3,6 @@ package com.example.android.baketime;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,7 +43,6 @@ public class RecipeRecyclerViewAdapter
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            Log.e(LOG_TAG,"inside mTwoPane is false");
             Context context = v.getContext();
             Intent intent = new Intent(context, RecipeStepListActivity.class);
             intent.putExtra("recipeName", mValues.get(position).name);

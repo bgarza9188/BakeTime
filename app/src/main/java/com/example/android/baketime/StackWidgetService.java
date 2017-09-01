@@ -61,8 +61,6 @@ class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory{
         // for example downloading or creating content etc, should be deferred to onDataSetChanged()
         // or getViewAt(). Taking more than 20 seconds in this call will result in an ANR.
 
-        Log.e(LOG_TAG,"Ben onCreate");
-
         // We sleep for 3 seconds here to show how the empty view appears in the interim.
         // The empty view is set in the StackWidgetProvider and should be a sibling of the
         // collection view.
@@ -80,7 +78,6 @@ class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory{
     }
 
     public int getCount() {
-        Log.e(StackRemoteViewsFactory.class.getName(),"Ben getCount");
         if(mWidgetItems != null) {
             return mWidgetItems.size();
         }
@@ -88,7 +85,6 @@ class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory{
     }
 
     public RemoteViews getViewAt(int position) {
-        Log.e(LOG_TAG,"Ben getViewAt");
         // position will always range from 0 to getCount() - 1.
 
         // We construct a remote views item based on our widget item xml file, and set the
@@ -139,7 +135,6 @@ class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory{
     }
 
     public void onDataSetChanged() {
-        Log.e(LOG_TAG, "Ben in onDataSetChanged()");
         // This is triggered when you call AppWidgetManager notifyAppWidgetViewDataChanged
         // on the collection view corresponding to this factory. You can do heaving lifting in
         // here, synchronously. For example, if you need to process an image, fetch something
@@ -208,7 +203,6 @@ class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory{
 
     private void getRecipeDataFromJson(String recipeJsonStr)
             throws JSONException {
-        Log.e(LOG_TAG, "Ben before json, in 'getRecipeDataFromJson' in StackWidgetService");
         // These are the names of the JSON objects that need to be extracted.
         JSONArray recipeArray = new JSONArray(recipeJsonStr);
         for (int i = 0; i < recipeArray.length(); i++) {
