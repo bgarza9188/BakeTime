@@ -2,9 +2,11 @@
     <string name="title_recipestep_list">Recipe - Steps</string>
     <string name="title_recipestep_detail">Recipe Step Details</string>
     <string name="app_name">Bake Time Recipes</string>
-    <string name="empty_view_text">This is the empty view</string>
+    <string name="empty_view_text">No Recipes Yet.</string>
     <string name="no_recipe_found">No Recipes Found.</string>
     <string name="success_msg">Success! You made it to the last step!</string>
     <string name="comma_with_space">", "</string>
     <string name="step_with_space">"Step "</string>
+    <string name="previous_button">PREVIOUS STEP</string>
+    <string name="next_button">NEXT STEP</string>
 </resources>

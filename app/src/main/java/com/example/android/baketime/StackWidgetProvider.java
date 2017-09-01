@@ -52,6 +52,7 @@ public class StackWidgetProvider extends AppWidgetProvider {
     public void onReceive(Context context, Intent intent) {
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
         int appWidgetID = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, 0);
+        //This will show the widget with the ingredients for the recipe that was clicked
         if (intent.getAction().equals(UPDATE_ACTION)) {
             String viewIngredients = intent.getStringExtra(EXTRA_ITEM);
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_list);

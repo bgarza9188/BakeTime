@@ -95,7 +95,6 @@ class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory{
         // Next, we set a fill-intent which will be used to fill-in the pending intent template
         // which is set on the collection view in StackWidgetProvider.
         Bundle extras = new Bundle();
-        //extras.putInt(StackWidgetProvider.EXTRA_ITEM, position);
         extras.putString(StackWidgetProvider.EXTRA_ITEM, mWidgetItems.get(position).ingredients);
         Intent fillInIntent = new Intent();
         fillInIntent.putExtras(extras);
@@ -215,7 +214,7 @@ class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory{
                 JSONObject ingredient = ingredientsArray.getJSONObject(j);
                 ingredients.append(ingredient.getString("ingredient"));
                 if(j < ingredientsArray.length()-1){
-                    ingredients.append(", ");
+                    ingredients.append(mContext.getString(R.string.comma_with_space));
                 }
             }
             mWidgetItems.add(new WidgetItem(name, ingredients.toString()));
