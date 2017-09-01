@@ -22,7 +22,7 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:support-annotations:25.4.0'
-
+    compile 'com.github.GrenderG:Toasty:1.2.5'
     compile 'com.google.android.exoplayer:exoplayer:r2.2.0'
     compile 'com.android.support:appcompat-v7:24.2.1'
     compile 'com.android.support:support-v4:24.2.1'

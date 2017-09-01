@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -31,6 +32,8 @@ import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
+
+import es.dmoral.toasty.Toasty;
 
 import static android.content.Context.WINDOW_SERVICE;
 
@@ -83,7 +86,6 @@ public class RecipeStepDetailFragment extends Fragment {
         }
 
         //setting current step position
-        //TODO might need to handle these buttons differently if tablet mode
         if(getArguments().containsKey(ARG_STEP_POS)){
             stepPosition = getArguments().getInt(ARG_STEP_POS);
         } else {
@@ -111,7 +113,6 @@ public class RecipeStepDetailFragment extends Fragment {
         }
 
         // Initialize the player view.
-        //TODO this might force fullscreen when in Tablet mode aswell, probably need to handle that separately.
         if(orientation == Surface.ROTATION_90 || orientation == Surface.ROTATION_270 && isTwoPane == false) {
             Log.e(LOG_TAG, "Ben getting view from Activity because Landscape");
             mPlayerView = (SimpleExoPlayerView) getActivity().findViewById(R.id.player_view);
@@ -167,7 +168,7 @@ public class RecipeStepDetailFragment extends Fragment {
             // Bind the player to the view.
             mPlayerView.setPlayer(mPlayer);
             mPlayerView.setDefaultArtwork(BitmapFactory.decodeResource
-                    (getResources(), R.drawable.question_mark));
+                    (getResources(), R.drawable.video_not_available));
         }
 
         if(rootView != null) {
@@ -177,11 +178,15 @@ public class RecipeStepDetailFragment extends Fragment {
             //Hide buttons as necessary
             if(stepsArray == null || stepPosition+1 == stepsArray.length) {
                 nextButton.setVisibility(View.INVISIBLE);
+
             }
             if(stepsArray == null || stepPosition == 1) {
                 previousButton.setVisibility(View.INVISIBLE);
             }
-
+            //If at end of step list in phone mode.
+            if(stepsArray != null && stepPosition+1 == stepsArray.length){
+                Toasty.success(getActivity(), "Success! You made it to the last step!", Toast.LENGTH_LONG, true).show();
+            }
             nextButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -199,8 +204,6 @@ public class RecipeStepDetailFragment extends Fragment {
                 Log.e(LOG_TAG,"Ben in onclick of next button");
                 }
             });
-
-
 
             previousButton.setOnClickListener(new View.OnClickListener() {
                 @Override

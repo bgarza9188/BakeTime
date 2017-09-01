@@ -73,7 +73,6 @@ public class StepRecyclerViewAdapter extends RecyclerView.Adapter<RecipeRecycler
                         intent.putExtra(RecipeStepDetailFragment.ARG_STEP_POS, position);
                         intent.putExtra(RecipeStepDetailFragment.ARG_STEP, mValues.get(position));
                         intent.putExtra(RecipeStepDetailFragment.ARG_STEPS, valuesToStringArray());
-                        //TODO might need to send all steps in an extra?
                         context.startActivity(intent);
                     }
                 }
