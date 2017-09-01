@@ -69,7 +69,10 @@ public class StepRecyclerViewAdapter extends RecyclerView.Adapter<RecipeRecycler
                         Log.e(LOG_TAG, "inside ON Click!");
                         Context context = v.getContext();
                         Intent intent = new Intent(context, RecipeStepDetailActivity.class);
+                        intent.putExtra(RecipeStepDetailFragment.ARG_STEP_POS, position);
                         intent.putExtra(RecipeStepDetailFragment.ARG_STEP, mValues.get(position));
+                        intent.putExtra(RecipeStepDetailFragment.ARG_STEPS, valuesToStringArray());
+                        //TODO might need to send all steps in an extra?
                         context.startActivity(intent);
                     }
                 }
@@ -83,6 +86,14 @@ public class StepRecyclerViewAdapter extends RecyclerView.Adapter<RecipeRecycler
             return mValues.size();
         }
         return 0;
+    }
+
+    public String[] valuesToStringArray() {
+        String[] result = new String[mValues.size()];
+        for(int i = 1; i < mValues.size(); i++){
+            result[i] = mValues.get(i);
+        }
+        return result;
     }
 
     public void clear() {

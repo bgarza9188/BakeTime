@@ -32,7 +32,6 @@ public class RecipeStepListFragment extends Fragment {
     /**
      * The dummy content this fragment is presenting.
      */
-    private RecipeRecyclerViewAdapter.Recipe recipe;
     private boolean mTwoPane = false;
 
     /**
@@ -52,6 +51,7 @@ public class RecipeStepListFragment extends Fragment {
         if(getActivity().getIntent().getStringExtra(INGREDIENTS) != null && getActivity().getIntent().getStringExtra(STEPS) != null && mAdapter.getItemCount() == 0) {
             StringBuilder ingredients = new StringBuilder();
             try {
+                mAdapter.clear();
                 JSONArray ingredientsArray = new JSONArray(getActivity().getIntent().getStringExtra(INGREDIENTS));
                 for (int i = 0; i < ingredientsArray.length(); i++) {
                     ingredients.append(ingredientsArray.getJSONObject(i).getString(INGREDIENT));
@@ -78,22 +78,6 @@ public class RecipeStepListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.e(LOG_TAG, "onCreate");
-//
-//        if (getArguments().containsKey(ARG_STEP)) {
-//            // Load the dummy content specified by the fragment
-//            // arguments. In a real-world scenario, use a Loader
-//            // to load content from a content provider.
-//            recipe = RecipeRecyclerViewAdapter.Recipe.ITEM_MAP.get(getArguments().getString(ARG_STEP));
-//
-//            Activity activity = this.getActivity();
-//            CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
-//            if (appBarLayout != null) {
-//                appBarLayout.setTitle(mItem.content);
-//            }
-//        }
-
-
-
     }
 
     @Override
@@ -101,10 +85,6 @@ public class RecipeStepListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.step_list, container, false);
 
-//        // Show the dummy content as name in a TextView.
-//        if (mItem != null) {
-//            ((TextView) rootView.findViewById(R.id.recipestep_detail)).setText(mItem.details);
-//        }
         mTwoPane = getActivity().getIntent().getBooleanExtra("mTwoPane",false);
         Log.e(LOG_TAG, "mTwoPane is..." + mTwoPane);
 

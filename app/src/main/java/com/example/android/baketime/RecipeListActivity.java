@@ -84,8 +84,8 @@ public class RecipeListActivity extends AppCompatActivity implements OnTaskCompl
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                RecipeRecyclerViewAdapter.Recipe test = new RecipeRecyclerViewAdapter.Recipe(id, name, ingredients, steps);
-                mAdapter.add(test);
+                RecipeRecyclerViewAdapter.Recipe recipe = new RecipeRecyclerViewAdapter.Recipe(id, name, ingredients, steps);
+                mAdapter.add(recipe);
                 mAdapter.notifyDataSetChanged();
                 //Log.e(LOG_TAG, "results:" + i + " " + result[i]);
             }

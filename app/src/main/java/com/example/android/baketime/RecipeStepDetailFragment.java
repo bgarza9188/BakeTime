@@ -4,6 +4,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -11,7 +12,9 @@ import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -40,6 +43,7 @@ import static android.content.Context.WINDOW_SERVICE;
  */
 public class RecipeStepDetailFragment extends Fragment {
 
+
     private final String LOG_TAG = RecipeStepDetailFragment.class.getSimpleName();
     private SimpleExoPlayer mPlayer;
 
@@ -48,8 +52,12 @@ public class RecipeStepDetailFragment extends Fragment {
      * represents.
      */
     public static final String ARG_STEP = "stepObject";
+    public static final String ARG_STEP_POS = "currentStepPosition";
+    public static final String ARG_STEPS = "currentStepList";
     private String stepDescription = null;
     private String stepVideoURL = null;
+    private String[] stepsArray;
+    private int stepPosition = 1;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -72,6 +80,15 @@ public class RecipeStepDetailFragment extends Fragment {
             stepDescription = StepRecyclerViewAdapter.getStepDescriptionFromJSON(getActivity().getIntent().getStringExtra(ARG_STEP));
             stepVideoURL = StepRecyclerViewAdapter.getStepVideoURL(getActivity().getIntent().getStringExtra(ARG_STEP));
         }
+
+        //setting current step position
+        //TODO might need to handle these buttons differently if tablet mode
+        if(getArguments().containsKey(ARG_STEP_POS)){
+            stepPosition = getArguments().getInt(ARG_STEP_POS);
+        } else {
+            stepPosition = getActivity().getIntent().getIntExtra(ARG_STEP_POS, 1);
+        }
+        stepsArray = getActivity().getIntent().getStringArrayExtra(ARG_STEPS);
     }
 
     @Override
@@ -147,6 +164,56 @@ public class RecipeStepDetailFragment extends Fragment {
 
         if(rootView != null) {
             ((TextView) rootView.findViewById(R.id.recipestep_detail)).setText(stepDescription);
+            final Button nextButton = (Button) rootView.findViewById(R.id.next_button);
+            final Button previousButton = (Button) rootView.findViewById(R.id.prev_button);
+            //Hide buttons as necessary
+            if(stepPosition+1 == stepsArray.length) {
+                nextButton.setVisibility(View.INVISIBLE);
+            }
+            if(stepPosition == 1) {
+                previousButton.setVisibility(View.INVISIBLE);
+            }
+
+            nextButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                if((stepPosition+1) < stepsArray.length) {
+                    Bundle arguments = new Bundle();
+                    FragmentManager mFragmentManager = getActivity().getSupportFragmentManager();
+                    arguments.putString(RecipeStepDetailFragment.ARG_STEP, stepsArray[stepPosition + 1]);
+                    arguments.putInt(RecipeStepDetailFragment.ARG_STEP_POS, stepPosition + 1);
+                    RecipeStepDetailFragment fragment = new RecipeStepDetailFragment();
+                    fragment.setArguments(arguments);
+                    mFragmentManager.beginTransaction()
+                            .replace(R.id.recipestep_detail_container, fragment)
+                            .commit();
+                }
+                Log.e(LOG_TAG,"Ben in onclick of next button");
+                }
+            });
+
+
+
+            previousButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if((stepPosition-1) >= 1) {
+                        Bundle arguments = new Bundle();
+                        FragmentManager mFragmentManager = getActivity().getSupportFragmentManager();
+                        arguments.putString(RecipeStepDetailFragment.ARG_STEP, stepsArray[stepPosition - 1]);
+                        arguments.putInt(RecipeStepDetailFragment.ARG_STEP_POS, stepPosition - 1);
+                        RecipeStepDetailFragment fragment = new RecipeStepDetailFragment();
+                        fragment.setArguments(arguments);
+                        mFragmentManager.beginTransaction()
+                                .replace(R.id.recipestep_detail_container, fragment)
+                                .commit();
+                    }
+                    Log.e(LOG_TAG,"Ben in onclick of prev button");
+                }
+            });
+
+
+
             return rootView;
         }
 
