@@ -60,6 +60,7 @@ public class StepRecyclerViewAdapter extends RecyclerView.Adapter<RecipeRecycler
                         Log.e(LOG_TAG,"inside mTwoPane is true");
                         Bundle arguments = new Bundle();
                         arguments.putString(RecipeStepDetailFragment.ARG_STEP, mValues.get(position));
+                        arguments.putBoolean(RecipeStepDetailFragment.ARG_TWO_PANE_FLAG, true);
                         RecipeStepDetailFragment fragment = new RecipeStepDetailFragment();
                         fragment.setArguments(arguments);
                         mFragmentManager.beginTransaction()

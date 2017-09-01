@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -54,10 +53,12 @@ public class RecipeStepDetailFragment extends Fragment {
     public static final String ARG_STEP = "stepObject";
     public static final String ARG_STEP_POS = "currentStepPosition";
     public static final String ARG_STEPS = "currentStepList";
+    public static final String ARG_TWO_PANE_FLAG = "isTwoPaneMode";
     private String stepDescription = null;
     private String stepVideoURL = null;
     private String[] stepsArray;
     private int stepPosition = 1;
+
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -88,7 +89,9 @@ public class RecipeStepDetailFragment extends Fragment {
         } else {
             stepPosition = getActivity().getIntent().getIntExtra(ARG_STEP_POS, 1);
         }
-        stepsArray = getActivity().getIntent().getStringArrayExtra(ARG_STEPS);
+        if(getActivity().getIntent().getStringArrayExtra(ARG_STEPS) != null) {
+            stepsArray = getActivity().getIntent().getStringArrayExtra(ARG_STEPS);
+        }
     }
 
     @Override
@@ -96,15 +99,20 @@ public class RecipeStepDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = null;
         SimpleExoPlayerView mPlayerView;
+
         Display display = ((WindowManager) getActivity().getSystemService(WINDOW_SERVICE))
                 .getDefaultDisplay();
-
         int orientation = display.getRotation();
+        boolean isTwoPane = false;
         Log.e(LOG_TAG, "orientation:" + orientation);
+
+        if(getArguments().containsKey(ARG_TWO_PANE_FLAG) && getArguments().getBoolean(ARG_TWO_PANE_FLAG)){
+            isTwoPane = true;
+        }
 
         // Initialize the player view.
         //TODO this might force fullscreen when in Tablet mode aswell, probably need to handle that separately.
-        if(orientation == Surface.ROTATION_90 || orientation == Surface.ROTATION_270) {
+        if(orientation == Surface.ROTATION_90 || orientation == Surface.ROTATION_270 && isTwoPane == false) {
             Log.e(LOG_TAG, "Ben getting view from Activity because Landscape");
             mPlayerView = (SimpleExoPlayerView) getActivity().findViewById(R.id.player_view);
         }else{
@@ -167,10 +175,10 @@ public class RecipeStepDetailFragment extends Fragment {
             final Button nextButton = (Button) rootView.findViewById(R.id.next_button);
             final Button previousButton = (Button) rootView.findViewById(R.id.prev_button);
             //Hide buttons as necessary
-            if(stepPosition+1 == stepsArray.length) {
+            if(stepsArray == null || stepPosition+1 == stepsArray.length) {
                 nextButton.setVisibility(View.INVISIBLE);
             }
-            if(stepPosition == 1) {
+            if(stepsArray == null || stepPosition == 1) {
                 previousButton.setVisibility(View.INVISIBLE);
             }
 
