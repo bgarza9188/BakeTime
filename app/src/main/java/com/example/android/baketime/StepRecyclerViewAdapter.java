@@ -57,7 +57,6 @@ public class StepRecyclerViewAdapter extends RecyclerView.Adapter<RecipeRecycler
                 @Override
                 public void onClick(View v) {
                     if (mTwoPane) {
-                        Log.e(LOG_TAG,"inside mTwoPane is true");
                         Bundle arguments = new Bundle();
                         arguments.putString(RecipeStepDetailFragment.ARG_STEP, mValues.get(position));
                         arguments.putBoolean(RecipeStepDetailFragment.ARG_TWO_PANE_FLAG, true);
@@ -67,7 +66,6 @@ public class StepRecyclerViewAdapter extends RecyclerView.Adapter<RecipeRecycler
                             .replace(R.id.step_detail_container, fragment)
                             .commit();
                     }else {
-                        Log.e(LOG_TAG, "inside ON Click!");
                         Context context = v.getContext();
                         Intent intent = new Intent(context, RecipeStepDetailActivity.class);
                         intent.putExtra(RecipeStepDetailFragment.ARG_STEP_POS, position);

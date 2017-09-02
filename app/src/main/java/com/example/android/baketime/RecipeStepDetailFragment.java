@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Surface;
@@ -63,7 +64,7 @@ public class RecipeStepDetailFragment extends Fragment {
     private int stepPosition = 1;
     private long position;
     private String SELECTED_POSITION = "selecetedPosition";
-    private SimpleExoPlayerView mPlayerView;
+    private SimpleExoPlayerView mPlayerView = null;
 
 
     /**
@@ -76,8 +77,9 @@ public class RecipeStepDetailFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (mPlayerView != null)
+        if (mPlayerView != null && position != C.TIME_UNSET) {
             initializePlayer(mPlayerView);
+        }
     }
 
     @Override
@@ -144,7 +146,9 @@ public class RecipeStepDetailFragment extends Fragment {
         }
 
         //Initialize Player
-        initializePlayer(mPlayerView);
+        if(savedInstanceState == null) {
+            initializePlayer(mPlayerView);
+        }
 
         if(rootView != null) {
             ((TextView) rootView.findViewById(R.id.recipestep_detail)).setText(stepDescription);
@@ -227,7 +231,9 @@ public class RecipeStepDetailFragment extends Fragment {
             MediaSource mediaSource = new ExtractorMediaSource(Uri.parse(stepVideoURL), new DefaultHttpDataSourceFactory(
                     "BakeTime"), new DefaultExtractorsFactory(), null, null);
             // Prepare the player with the source.
-            if (position != C.TIME_UNSET) mPlayer.seekTo(position);
+            if (position != C.TIME_UNSET) {
+                mPlayer.seekTo(position);
+            }
             mPlayer.prepare(mediaSource);
             mPlayer.setPlayWhenReady(true);
         } else {

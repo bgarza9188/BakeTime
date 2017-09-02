@@ -59,7 +59,7 @@ public class RecipeStepListFragment extends Fragment {
                 mAdapter.add(ingredients.toString());
                 mAdapter.notifyDataSetChanged();
                 JSONArray stepsArray = new JSONArray(getActivity().getIntent().getStringExtra(STEPS));
-                for (int i = 1; i < stepsArray.length(); i++) {
+                for (int i = 0; i < stepsArray.length(); i++) {
                     mAdapter.add(stepsArray.getJSONObject(i).toString());
                     mAdapter.notifyDataSetChanged();
                 }
