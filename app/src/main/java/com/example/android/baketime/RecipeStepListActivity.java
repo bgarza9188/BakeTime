@@ -1,8 +1,10 @@
 package com.example.android.baketime;
 
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -41,6 +43,12 @@ public class RecipeStepListActivity extends AppCompatActivity implements View.On
         }
         setSupportActionBar(toolbar);
 
+        // Show the Up button in the action bar.
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
         if (findViewById(R.id.step_detail_container) != null) {
             // The detail container view will be present only in the
             // large-screen layouts (res/layout-w600dp).
@@ -55,6 +63,17 @@ public class RecipeStepListActivity extends AppCompatActivity implements View.On
                     .add(R.id.step_list_container, fragment)
                     .commit();
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            // This will give it 'Back Button' functionality.
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

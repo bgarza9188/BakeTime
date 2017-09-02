@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -60,6 +61,9 @@ public class RecipeStepDetailFragment extends Fragment {
     private String stepVideoURL = null;
     private String[] stepsArray;
     private int stepPosition = 1;
+    private long position;
+    private String SELECTED_POSITION = "selecetedPosition";
+    private SimpleExoPlayerView mPlayerView;
 
 
     /**
@@ -67,6 +71,22 @@ public class RecipeStepDetailFragment extends Fragment {
      * fragment (e.g. upon screen orientation changes).
      */
     public RecipeStepDetailFragment() {
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mPlayerView != null)
+            initializePlayer(mPlayerView);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mPlayer != null) {
+            position = mPlayer.getCurrentPosition();
+            releasePlayer();
+        }
     }
 
     @Override
@@ -92,13 +112,17 @@ public class RecipeStepDetailFragment extends Fragment {
         if(getActivity().getIntent().getStringArrayExtra(ARG_STEPS) != null) {
             stepsArray = getActivity().getIntent().getStringArrayExtra(ARG_STEPS);
         }
+
+        position = C.TIME_UNSET;
+        if (savedInstanceState != null) {
+            position = savedInstanceState.getLong(SELECTED_POSITION, C.TIME_UNSET);
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = null;
-        SimpleExoPlayerView mPlayerView;
 
         Display display = ((WindowManager) getActivity().getSystemService(WINDOW_SERVICE))
                 .getDefaultDisplay();
@@ -119,50 +143,8 @@ public class RecipeStepDetailFragment extends Fragment {
             mPlayerView = (SimpleExoPlayerView) rootView.findViewById(R.id.player_view);
         }
 
-        if(stepVideoURL != null && !stepVideoURL.isEmpty()) {
-            // 1. Create a default TrackSelector
-            BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
-            TrackSelection.Factory videoTrackSelectionFactory =
-                    new AdaptiveVideoTrackSelection.Factory(bandwidthMeter);
-            TrackSelector trackSelector =
-                    new DefaultTrackSelector(videoTrackSelectionFactory);
-            LoadControl loadControl = new DefaultLoadControl();
-
-            // 2. Create the player
-            mPlayer = ExoPlayerFactory.newSimpleInstance(getActivity(), trackSelector, loadControl);
-
-            // Bind the player to the view.
-            mPlayerView.setPlayer(mPlayer);
-
-            // Set the ExoPlayer.EventListener to this activity.
-            mPlayer.addListener((ExoPlayer.EventListener) getActivity());
-
-            // Prepare the MediaSource.
-            // Produces DataSource instances through which media data is loaded.
-            // This is the MediaSource representing the media to be played.
-            MediaSource mediaSource = new ExtractorMediaSource(Uri.parse(stepVideoURL), new DefaultHttpDataSourceFactory(
-                    "BakeTime"), new DefaultExtractorsFactory(), null, null);
-            // Prepare the player with the source.
-            mPlayer.prepare(mediaSource);
-            mPlayer.setPlayWhenReady(true);
-        } else {
-            //This player will show a blank video since one wasn't provided with the step.
-            // 1. Create a default TrackSelector
-            BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
-            TrackSelection.Factory videoTrackSelectionFactory =
-                    new AdaptiveVideoTrackSelection.Factory(bandwidthMeter);
-            TrackSelector trackSelector =
-                    new DefaultTrackSelector(videoTrackSelectionFactory);
-            LoadControl loadControl = new DefaultLoadControl();
-
-            // 2. Create the player
-            mPlayer = ExoPlayerFactory.newSimpleInstance(getActivity(), trackSelector, loadControl);
-
-            // Bind the player to the view.
-            mPlayerView.setPlayer(mPlayer);
-            mPlayerView.setDefaultArtwork(BitmapFactory.decodeResource
-                    (getResources(), R.drawable.video_not_available));
-        }
+        //Initialize Player
+        initializePlayer(mPlayerView);
 
         if(rootView != null) {
             ((TextView) rootView.findViewById(R.id.recipestep_detail)).setText(stepDescription);
@@ -218,6 +200,59 @@ public class RecipeStepDetailFragment extends Fragment {
         }
 
         return mPlayerView;
+    }
+
+    private void initializePlayer(SimpleExoPlayerView mPlayerView) {
+        if(stepVideoURL != null && !stepVideoURL.isEmpty()) {
+            // 1. Create a default TrackSelector
+            BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
+            TrackSelection.Factory videoTrackSelectionFactory =
+                    new AdaptiveVideoTrackSelection.Factory(bandwidthMeter);
+            TrackSelector trackSelector =
+                    new DefaultTrackSelector(videoTrackSelectionFactory);
+            LoadControl loadControl = new DefaultLoadControl();
+
+            // 2. Create the player
+            mPlayer = ExoPlayerFactory.newSimpleInstance(getActivity(), trackSelector, loadControl);
+
+            // Bind the player to the view.
+            mPlayerView.setPlayer(mPlayer);
+
+            // Set the ExoPlayer.EventListener to this activity.
+            mPlayer.addListener((ExoPlayer.EventListener) getActivity());
+
+            // Prepare the MediaSource.
+            // Produces DataSource instances through which media data is loaded.
+            // This is the MediaSource representing the media to be played.
+            MediaSource mediaSource = new ExtractorMediaSource(Uri.parse(stepVideoURL), new DefaultHttpDataSourceFactory(
+                    "BakeTime"), new DefaultExtractorsFactory(), null, null);
+            // Prepare the player with the source.
+            if (position != C.TIME_UNSET) mPlayer.seekTo(position);
+            mPlayer.prepare(mediaSource);
+            mPlayer.setPlayWhenReady(true);
+        } else {
+            //This player will show a blank video since one wasn't provided with the step.
+            // 1. Create a default TrackSelector
+            BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
+            TrackSelection.Factory videoTrackSelectionFactory =
+                    new AdaptiveVideoTrackSelection.Factory(bandwidthMeter);
+            TrackSelector trackSelector =
+                    new DefaultTrackSelector(videoTrackSelectionFactory);
+            LoadControl loadControl = new DefaultLoadControl();
+
+            // 2. Create the player
+            mPlayer = ExoPlayerFactory.newSimpleInstance(getActivity(), trackSelector, loadControl);
+
+            // Bind the player to the view.
+            mPlayerView.setPlayer(mPlayer);
+            mPlayerView.setDefaultArtwork(BitmapFactory.decodeResource
+                    (getResources(), R.drawable.video_not_available));
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState){
+        savedInstanceState.putLong(SELECTED_POSITION, position);
     }
 
     /**
