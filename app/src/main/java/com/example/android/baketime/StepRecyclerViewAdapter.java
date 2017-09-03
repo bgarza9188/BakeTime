@@ -51,7 +51,11 @@ public class StepRecyclerViewAdapter extends RecyclerView.Adapter<RecipeRecycler
             holder.mContentView.setText(mValues.get(position));
         }
         else if(position>0){
-            holder.mIdView.setText(mContext.getString(R.string.step_with_space) + position);
+            if(position == 1) {
+                holder.mIdView.setText(mContext.getString(R.string.intro_step));
+            } else {
+                holder.mIdView.setText(mContext.getString(R.string.step_with_space) + (position - 1));
+            }
             holder.mContentView.setText(getStepShortDescriptionFromJSON(mValues.get(position)));
             holder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -130,6 +134,16 @@ public class StepRecyclerViewAdapter extends RecyclerView.Adapter<RecipeRecycler
         try {
             JSONObject stepString = new JSONObject(step);
             return stepString.getString("videoURL");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static String getStepThumbnailURL(String step) {
+        try {
+            JSONObject stepString = new JSONObject(step);
+            return stepString.getString("thumbnailURL");
         } catch (JSONException e) {
             e.printStackTrace();
         }

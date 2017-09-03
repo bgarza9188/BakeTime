@@ -9,4 +9,5 @@
     <string name="step_with_space">"Step "</string>
     <string name="previous_button">PREVIOUS STEP</string>
     <string name="next_button">NEXT STEP</string>
+    <string name="intro_step">Intro.</string>
 </resources>

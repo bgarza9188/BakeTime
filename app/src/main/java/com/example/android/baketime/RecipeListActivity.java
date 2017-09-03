@@ -46,7 +46,7 @@ public class RecipeListActivity extends AppCompatActivity implements OnTaskCompl
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView, boolean mTwoPane) {
-        mAdapter = new RecipeRecyclerViewAdapter();
+        mAdapter = new RecipeRecyclerViewAdapter(getApplicationContext());
         if(mAdapter != null && recyclerView != null) {
             recyclerView.setAdapter(mAdapter);
         }
@@ -64,16 +64,18 @@ public class RecipeListActivity extends AppCompatActivity implements OnTaskCompl
                 String name = null;
                 String ingredients = null;
                 String steps = null;
+                String image = null;
                 try {
                     JSONObject jsonObject = new JSONObject(result[i]);
                     id = jsonObject.get("id").toString();
                     name = jsonObject.get("name").toString();
                     ingredients = jsonObject.get("ingredients").toString();
                     steps = jsonObject.get("steps").toString();
+                    image = jsonObject.get("image").toString();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                RecipeRecyclerViewAdapter.Recipe recipe = new RecipeRecyclerViewAdapter.Recipe(id, name, ingredients, steps);
+                RecipeRecyclerViewAdapter.Recipe recipe = new RecipeRecyclerViewAdapter.Recipe(id, name, ingredients, steps, image);
                 mAdapter.add(recipe);
                 mAdapter.notifyDataSetChanged();
             }

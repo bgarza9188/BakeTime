@@ -1,11 +1,16 @@
 package com.example.android.baketime;
 
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.Display;
 import android.view.MenuItem;
+import android.view.Surface;
 import android.view.View;
+import android.view.WindowManager;
 
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -31,6 +36,7 @@ public class RecipeStepDetailActivity extends AppCompatActivity implements View.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_recipestep_detail);
         Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);
@@ -57,9 +63,11 @@ public class RecipeStepDetailActivity extends AppCompatActivity implements View.
                     getIntent().getStringExtra(RecipeStepDetailFragment.ARG_STEP));
             RecipeStepDetailFragment fragment = new RecipeStepDetailFragment();
             fragment.setArguments(arguments);
-            getSupportFragmentManager().beginTransaction()
+            if(findViewById(R.id.recipestep_detail_container) != null) {
+                getSupportFragmentManager().beginTransaction()
                     .add(R.id.recipestep_detail_container, fragment)
                     .commit();
+            }
         }
     }
 

@@ -38,8 +38,11 @@ public class FetchRecipeTask extends AsyncTask<String, Void, String[]> {
 
             URL url = new URL(recipe_URL);
 
-            // Create the request to OpenWeatherMap, and open the connection
+            // Create the request to JSON data, and open the connection
             urlConnection = (HttpURLConnection) url.openConnection();
+            // set the connection timeout to 5 seconds and the read timeout to 10 seconds
+            urlConnection.setConnectTimeout(5000);
+            urlConnection.setReadTimeout(10000);
             urlConnection.setRequestMethod("GET");
             urlConnection.connect();
 
@@ -50,6 +53,7 @@ public class FetchRecipeTask extends AsyncTask<String, Void, String[]> {
                 // Nothing to do.
                 return null;
             }
+            // get a stream to read data from
             reader = new BufferedReader(new InputStreamReader(inputStream));
 
             String line;

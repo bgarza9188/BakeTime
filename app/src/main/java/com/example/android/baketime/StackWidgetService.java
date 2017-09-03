@@ -151,8 +151,11 @@ class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory{
 
             URL url = new URL(recipe_URL);
 
-            // Create the request to OpenWeatherMap, and open the connection
+            // Create the request to JSON data, and open the connection
             urlConnection = (HttpURLConnection) url.openConnection();
+            // set the connection timeout to 5 seconds and the read timeout to 10 seconds
+            urlConnection.setConnectTimeout(5000);
+            urlConnection.setReadTimeout(10000);
             urlConnection.setRequestMethod("GET");
             urlConnection.connect();
 

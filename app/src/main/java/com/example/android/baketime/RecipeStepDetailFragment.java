@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,6 +34,7 @@ import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
+import com.squareup.picasso.Picasso;
 
 import es.dmoral.toasty.Toasty;
 
@@ -47,6 +49,7 @@ import static android.content.Context.WINDOW_SERVICE;
 public class RecipeStepDetailFragment extends Fragment {
 
 
+
     private final String LOG_TAG = RecipeStepDetailFragment.class.getSimpleName();
     private SimpleExoPlayer mPlayer;
 
@@ -54,16 +57,18 @@ public class RecipeStepDetailFragment extends Fragment {
      * The fragment argument representing the step ID that this fragment
      * represents.
      */
+    public static final String ARG_STEP_DESCRIPTION = "stepShortDescription";
     public static final String ARG_STEP = "stepObject";
     public static final String ARG_STEP_POS = "currentStepPosition";
     public static final String ARG_STEPS = "currentStepList";
     public static final String ARG_TWO_PANE_FLAG = "isTwoPaneMode";
     private String stepDescription = null;
     private String stepVideoURL = null;
+    private String stepThumbnailURL = null;
     private String[] stepsArray;
     private int stepPosition = 1;
     private long position;
-    private String SELECTED_POSITION = "selecetedPosition";
+    private String SELECTED_POSITION = "selectedPosition";
     private SimpleExoPlayerView mPlayerView = null;
 
 
@@ -100,21 +105,24 @@ public class RecipeStepDetailFragment extends Fragment {
         if (getArguments().containsKey(ARG_STEP) && getArguments().getString(ARG_STEP) != null) {
             stepDescription = StepRecyclerViewAdapter.getStepDescriptionFromJSON(getArguments().getString(ARG_STEP));
             stepVideoURL = StepRecyclerViewAdapter.getStepVideoURL(getArguments().getString(ARG_STEP));
+            stepThumbnailURL = StepRecyclerViewAdapter.getStepThumbnailURL(getArguments().getString(ARG_STEP));
         } else {
             stepDescription = StepRecyclerViewAdapter.getStepDescriptionFromJSON(getActivity().getIntent().getStringExtra(ARG_STEP));
             stepVideoURL = StepRecyclerViewAdapter.getStepVideoURL(getActivity().getIntent().getStringExtra(ARG_STEP));
+            stepThumbnailURL = StepRecyclerViewAdapter.getStepThumbnailURL(getActivity().getIntent().getStringExtra(ARG_STEP));
         }
 
-        //setting current step position
+        //Setting current step position
         if(getArguments().containsKey(ARG_STEP_POS)){
             stepPosition = getArguments().getInt(ARG_STEP_POS);
         } else {
             stepPosition = getActivity().getIntent().getIntExtra(ARG_STEP_POS, 1);
         }
+        //Setting array of steps.
         if(getActivity().getIntent().getStringArrayExtra(ARG_STEPS) != null) {
             stepsArray = getActivity().getIntent().getStringArrayExtra(ARG_STEPS);
         }
-
+        //Setting video player position.
         position = C.TIME_UNSET;
         if (savedInstanceState != null) {
             position = savedInstanceState.getLong(SELECTED_POSITION, C.TIME_UNSET);
@@ -139,6 +147,9 @@ public class RecipeStepDetailFragment extends Fragment {
 
         // Initialize the player view. This is done dynamically to handle orientation changes.
         if(orientation == Surface.ROTATION_90 || orientation == Surface.ROTATION_270 && isTwoPane == false) {
+            //{LANDSCAPE}
+            // Hide status bar
+            getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
             mPlayerView = (SimpleExoPlayerView) getActivity().findViewById(R.id.player_view);
         }else{
             rootView = inflater.inflate(R.layout.recipestep_detail, container, false);
@@ -152,6 +163,11 @@ public class RecipeStepDetailFragment extends Fragment {
 
         if(rootView != null) {
             ((TextView) rootView.findViewById(R.id.recipestep_detail)).setText(stepDescription);
+            ImageView thumbnailImageView = (ImageView) rootView.findViewById(R.id.step_thumbnail);
+            //Setting thumbnail image if any.
+            if(stepThumbnailURL != null && !stepThumbnailURL.isEmpty()) {
+                Picasso.with(getContext()).load(stepThumbnailURL).into(thumbnailImageView);
+            }
             final Button nextButton = (Button) rootView.findViewById(R.id.next_button);
             final Button previousButton = (Button) rootView.findViewById(R.id.prev_button);
             //Hide buttons as necessary
