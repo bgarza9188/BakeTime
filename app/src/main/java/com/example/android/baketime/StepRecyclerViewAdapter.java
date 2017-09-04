@@ -28,11 +28,13 @@ public class StepRecyclerViewAdapter extends RecyclerView.Adapter<RecipeRecycler
 
     private FragmentManager mFragmentManager;
     private Context mContext;
+    private String mTitle = null;
 
 
-    public StepRecyclerViewAdapter(Context context, FragmentManager fragmentManager, boolean mTwoPane) {
+    public StepRecyclerViewAdapter(Context context, FragmentManager fragmentManager, boolean mTwoPane, CharSequence title) {
         mContext = context;
         mFragmentManager = fragmentManager;
+        mTitle = title.toString();
         this.mTwoPane = mTwoPane;
         mValues = new ArrayList<>();
     }
@@ -72,6 +74,7 @@ public class StepRecyclerViewAdapter extends RecyclerView.Adapter<RecipeRecycler
                     }else {
                         Context context = v.getContext();
                         Intent intent = new Intent(context, RecipeStepDetailActivity.class);
+                        intent.putExtra("recipeName", mTitle);
                         intent.putExtra(RecipeStepDetailFragment.ARG_STEP_POS, position);
                         intent.putExtra(RecipeStepDetailFragment.ARG_STEP, mValues.get(position));
                         intent.putExtra(RecipeStepDetailFragment.ARG_STEPS, valuesToStringArray());

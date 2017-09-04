@@ -91,7 +91,7 @@ public class RecipeStepListFragment extends Fragment {
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView, boolean mTwoPane) {
-        mAdapter = new StepRecyclerViewAdapter(getContext(), getFragmentManager(), mTwoPane);
+        mAdapter = new StepRecyclerViewAdapter(getContext(), getFragmentManager(), mTwoPane, getActivity().getIntent().getStringExtra("recipeName"));
         recyclerView.setAdapter(mAdapter);
     }
 

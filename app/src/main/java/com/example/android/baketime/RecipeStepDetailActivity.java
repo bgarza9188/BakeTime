@@ -1,16 +1,11 @@
 package com.example.android.baketime;
 
-import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.Display;
 import android.view.MenuItem;
-import android.view.Surface;
 import android.view.View;
-import android.view.WindowManager;
 
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -27,19 +22,21 @@ import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 public class RecipeStepDetailActivity extends AppCompatActivity implements View.OnClickListener, ExoPlayer.EventListener{
 
     private final String LOG_TAG = RecipeStepDetailActivity.class.getSimpleName();
-
-    @Override
-    public void onStart(){
-        super.onStart();
-    }
+    private final String nonUIFragment = "nonUIStepDetailFragment";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_recipestep_detail);
         Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
-        setSupportActionBar(toolbar);
+        if(toolbar != null) {
+            if (getIntent().getStringExtra("recipeName") != null) {
+                toolbar.setTitle(getIntent().getStringExtra("recipeName"));
+            } else {
+                toolbar.setTitle(getTitle());
+            }
+            setSupportActionBar(toolbar);
+        }
 
         // Show the Up button in the action bar.
         ActionBar actionBar = getSupportActionBar();
@@ -67,6 +64,27 @@ public class RecipeStepDetailActivity extends AppCompatActivity implements View.
                 getSupportFragmentManager().beginTransaction()
                     .add(R.id.recipestep_detail_container, fragment)
                     .commit();
+            } else {
+                getSupportFragmentManager().beginTransaction().add(fragment, nonUIFragment).commit();
+            }
+        } else {
+            if(getSupportFragmentManager().findFragmentByTag(nonUIFragment) != null) {
+                RecipeStepDetailFragment fragment = (RecipeStepDetailFragment) getSupportFragmentManager().findFragmentByTag(nonUIFragment);
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .remove(getSupportFragmentManager()
+                        .findFragmentByTag(nonUIFragment)).commit();
+                RecipeStepDetailFragment uiFragment = new RecipeStepDetailFragment();
+                uiFragment.position = fragment.position;
+                if(findViewById(R.id.recipestep_detail_container) != null) {
+                    Bundle arguments = new Bundle();
+                    arguments.putString(RecipeStepDetailFragment.ARG_STEP,
+                            getIntent().getStringExtra(RecipeStepDetailFragment.ARG_STEP));
+                    uiFragment.setArguments(arguments);
+                    getSupportFragmentManager().beginTransaction()
+                            .add(R.id.recipestep_detail_container, uiFragment)
+                            .commit();
+                }
             }
         }
     }
@@ -104,7 +122,6 @@ public class RecipeStepDetailActivity extends AppCompatActivity implements View.
 
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-
     }
 
     @Override

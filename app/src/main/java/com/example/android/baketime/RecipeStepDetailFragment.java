@@ -57,7 +57,6 @@ public class RecipeStepDetailFragment extends Fragment {
      * The fragment argument representing the step ID that this fragment
      * represents.
      */
-    public static final String ARG_STEP_DESCRIPTION = "stepShortDescription";
     public static final String ARG_STEP = "stepObject";
     public static final String ARG_STEP_POS = "currentStepPosition";
     public static final String ARG_STEPS = "currentStepList";
@@ -67,9 +66,18 @@ public class RecipeStepDetailFragment extends Fragment {
     private String stepThumbnailURL = null;
     private String[] stepsArray;
     private int stepPosition = 1;
-    private long position;
+    public long position = 0;
     private String SELECTED_POSITION = "selectedPosition";
     private SimpleExoPlayerView mPlayerView = null;
+    /**
+     * Denotes whether or not to display a thumbnail video or image.
+     */
+    private boolean loadThumbnailImageURL = false;
+    /**
+     * Denotes whether we had to restart the fragment from a previously created
+     * non UI fragment.
+     */
+    private boolean transitionFlag = false;
 
 
     /**
@@ -82,8 +90,11 @@ public class RecipeStepDetailFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (mPlayerView != null && position != C.TIME_UNSET) {
+        if (mPlayerView != null && position != C.TIME_UNSET && transitionFlag == false) {
             initializePlayer(mPlayerView);
+        }
+        if(transitionFlag == true) {
+            transitionFlag = false;
         }
     }
 
@@ -123,7 +134,12 @@ public class RecipeStepDetailFragment extends Fragment {
             stepsArray = getActivity().getIntent().getStringArrayExtra(ARG_STEPS);
         }
         //Setting video player position.
-        position = C.TIME_UNSET;
+        if(position == 0) {
+            position = C.TIME_UNSET;
+        } else if (position > 0){
+            //Position will be greater than zero if the user starts in landscape mode.
+            transitionFlag = true;
+        }
         if (savedInstanceState != null) {
             position = savedInstanceState.getLong(SELECTED_POSITION, C.TIME_UNSET);
         }
@@ -156,6 +172,14 @@ public class RecipeStepDetailFragment extends Fragment {
             mPlayerView = (SimpleExoPlayerView) rootView.findViewById(R.id.player_view);
         }
 
+        if(stepThumbnailURL != null && !stepThumbnailURL.isEmpty()) {
+            String extension = stepThumbnailURL.substring(stepThumbnailURL.lastIndexOf("."));
+            if (extension.contains("mp4")) {
+                stepVideoURL = stepThumbnailURL;
+            } else {
+                loadThumbnailImageURL = true;
+            }
+        }
         //Initialize Player
         if(savedInstanceState == null) {
             initializePlayer(mPlayerView);
@@ -165,7 +189,7 @@ public class RecipeStepDetailFragment extends Fragment {
             ((TextView) rootView.findViewById(R.id.recipestep_detail)).setText(stepDescription);
             ImageView thumbnailImageView = (ImageView) rootView.findViewById(R.id.step_thumbnail);
             //Setting thumbnail image if any.
-            if(stepThumbnailURL != null && !stepThumbnailURL.isEmpty()) {
+            if(loadThumbnailImageURL == true) {
                 Picasso.with(getContext()).load(stepThumbnailURL).into(thumbnailImageView);
             }
             final Button nextButton = (Button) rootView.findViewById(R.id.next_button);
@@ -173,7 +197,6 @@ public class RecipeStepDetailFragment extends Fragment {
             //Hide buttons as necessary
             if(stepsArray == null || stepPosition+1 == stepsArray.length) {
                 nextButton.setVisibility(View.INVISIBLE);
-
             }
             if(stepsArray == null || stepPosition == 1) {
                 previousButton.setVisibility(View.INVISIBLE);
